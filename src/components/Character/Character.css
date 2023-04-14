@@ -42,3 +42,7 @@
     margin: 0 1em;
     border-radius: 10px;
 }
+
+.Character-cls-satisfy {
+    color: #ff0000;
+}
