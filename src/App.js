@@ -8,7 +8,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>React Coding Exercise</h1>
+        <h1>React Coding Exercise - Prit Sorathiya</h1>
       </header>
       <section className="App-section">
         <div>
