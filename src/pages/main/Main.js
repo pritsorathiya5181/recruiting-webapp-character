@@ -8,9 +8,8 @@ function Main() {
 
     useEffect(() => {
         fetchCharacters().then(data => {
-            if (data.length > 0) {
-                setCharactersData(data)
-            }
+            const charactersResult = data.body ? data.body : [defaultCharacter]
+            setCharactersData(charactersResult);
         });
     }, [])
 
@@ -26,7 +25,7 @@ function Main() {
                 await fetch("https://recruiting.verylongdomaintotestwith.ca/api/{pritsorathiya5181}/character", requestOptions)
                     .then(response => response.json())
                     .then(result => {
-                        resolve(result.body)
+                        resolve(result)
                     })
                     .catch(error => console.log('error', error));
             } catch (error) {
