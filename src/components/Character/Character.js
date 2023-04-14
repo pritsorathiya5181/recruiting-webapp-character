@@ -115,6 +115,7 @@ function Character(props) {
         };
 
         setCharacter(updatedCharacter);
+        props.setCharactersData(updatedCharacter)
     }
 
     const checkClassRequirements = (updatedCharacter) => {
@@ -154,6 +155,7 @@ function Character(props) {
         };
 
         setCharacter(newCharacter);
+        props.setCharactersData(newCharacter)
     }
 
     return (

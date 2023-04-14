@@ -4,57 +4,87 @@ import './Main.css'
 import { defaultCharacter } from '../../consts';
 
 function Main() {
-    const [charactersData, setCharactersData] = useState([defaultCharacter]);
+    const [charactersData, setCharactersData] = useState([]);
 
     useEffect(() => {
-        setCharactersData([
-            ...charactersData,
-            {
-                title: "Character 2",
-                attributes: {
-                    'Strength': 10,
-                    'Dexterity': 10,
-                    'Constitution': 10,
-                    'Intelligence': 10,
-                    'Wisdom': 10,
-                    'Charisma': 10,
-                },
-                classes: {
-                    'Barbarian': false,
-                    'Wizard': false,
-                    'Bard': false,
-                },
-                skillSet: {
-                    totalAvailablePoints: 10,
-                    skills: [{ name: 'Acrobatics', attributeModifier: 'Dexterity', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Animal Handling', attributeModifier: 'Wisdom', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Arcana', attributeModifier: 'Intelligence', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Athletics', attributeModifier: 'Strength', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Deception', attributeModifier: 'Charisma', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'History', attributeModifier: 'Intelligence', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Insight', attributeModifier: 'Wisdom', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Intimidation', attributeModifier: 'Charisma', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Investigation', attributeModifier: 'Intelligence', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Medicine', attributeModifier: 'Wisdom', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Nature', attributeModifier: 'Intelligence', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Perception', attributeModifier: 'Wisdom', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Performance', attributeModifier: 'Charisma', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Persuasion', attributeModifier: 'Charisma', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Religion', attributeModifier: 'Intelligence', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Sleight of Hand', attributeModifier: 'Dexterity', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Stealth', attributeModifier: 'Dexterity', points: 0, modifierPoints: 0, totalPoints: 0 },
-                    { name: 'Survival', attributeModifier: 'Wisdom', points: 0, modifierPoints: 0, totalPoints: 0 },]
-                }
+        fetchCharacters().then(data => {
+            if (data.length > 0) {
+                setCharactersData(data)
             }
-        ]);
+        });
     }, [])
+
+    const fetchCharacters = async () => {
+        return new Promise(async (resolve, rejects) => {
+            try {
+
+                var requestOptions = {
+                    method: 'GET',
+                    redirect: 'follow'
+                };
+
+                await fetch("https://recruiting.verylongdomaintotestwith.ca/api/{pritsorathiya5181}/character", requestOptions)
+                    .then(response => response.json())
+                    .then(result => {
+                        resolve(result.body)
+                    })
+                    .catch(error => console.log('error', error));
+            } catch (error) {
+                rejects(error)
+            }
+        })
+    }
+
+    const saveCharacters = () => {
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify(charactersData);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch("https://recruiting.verylongdomaintotestwith.ca/api/{pritsorathiya5181}/character", requestOptions)
+            .then(response => response.json())
+            .then(result => alert("Saved characters successfully"))
+            .catch(error => console.log('error', error));
+    }
+
+    const doUpdateCharactersData = (updatedCharacterData) => {
+        const updatedData = charactersData.map((characters, index) => {
+            if (characters.title === updatedCharacterData.title) {
+                return updatedCharacterData
+            } else {
+                return characters;
+            }
+        });
+
+        setCharactersData(updatedData);
+    }
+
+    const addNewCharacter = () => {
+        const newCharacter = {
+            ...defaultCharacter,
+            title: `Character ${charactersData.length + 1}`
+        }
+        setCharactersData([...charactersData, newCharacter])
+    }
 
     return (
         <div className='Main'>
+            <div className='Main-actions'>
+                <button onClick={() => addNewCharacter()}>Add New Characters</button>
+                <button onClick={() => saveCharacters()}>Save All Characters</button>
+            </div>
             {
                 charactersData.map((item, index) => {
                     return (
-                        <Character key={index.toString()} data={item} />
+                        <Character key={index.toString()} data={item}
+                            setCharactersData={(updatedCharacterData) => doUpdateCharactersData(updatedCharacterData)} />
                     )
                 })
             }
